@@ -18,191 +18,182 @@
 
 const React = require('react');
 const ReactNative = require('react-native');
-const ViewExample = require('./ViewExample');
-const createExamplePage = require('./createExamplePage');
+
 const {
     AlertIOS,
     NavigatorIOS,
     ScrollView,
     StyleSheet,
+    Component,
     Text,
     TouchableHighlight,
     View,
+    AppRegistry,
+    ListView
 } = ReactNative;
 
-const EmptyPage = React.createClass({
-    render: function() {
-        return (
-            <View style={styles.emptyPage}>
-            <Text style={styles.emptyPageText}>
-            {this.props.text}
-            </Text>
-            </View>
-        );
-    },
-});
 
-const NavigatorIOSExamplePage = React.createClass({
-    render: function() {
-        var recurseTitle = 'Recurse Navigation';
-        if (!this.props.depth || this.props.depth === 1) {
-            recurseTitle += ' - more examples here';
+
+const Data = {
+    type: "select-list",
+    data: {
+        edit: {
+            type: "data-list",
+            data: [
+                {
+                    title: "delete",
+                    text: "C-h"
+                },
+                {
+                    title: "delete",
+                    text: "C-h"
+                }
+            ]
+        },
+        search: {
+            type: "data-list",
+            data: [
+                {
+                    title: "delete",
+                    text: "C-h"
+                }
+            ]
+        },
+        plugins: {
+            type: "select-list",
+            data: {
+                edit: {
+                    type: "data-list",
+                    data: [
+                        {
+                            title: "delete",
+                            text: "C-h"
+                        }
+                    ]
+                },
+                search: {
+                    type: "data-list",
+                    data: [
+                        {
+                            title: "delete",
+                            text: "C-h"
+                        }
+                    ]
+                }
+            }
         }
+    }
+}
+
+const DataListPage = React.createClass({
+
+    
+    getInitialState: function() {
+        var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+        return {
+            dataSource: ds.cloneWithRows(this.props.data)
+        };
+    },
+
+    render: function() {
         return (
             <ScrollView style={styles.list}>
             <View style={styles.line}/>
-            <View style={styles.group}>
-            {this._renderRow(recurseTitle, () => {
-                this.props.navigator.push({
-                    title: NavigatorIOSExample.title,
-                    component: NavigatorIOSExamplePage,
-                    backButtonTitle: 'Custom Back',
-                    passProps: {depth: this.props.depth ? this.props.depth + 1 : 1},
-                });
-            })}
-            {this._renderRow('Push View Example', () => {
-                this.props.navigator.push({
-                    title: 'Very Long Custom View Example Title',
-                    component: createExamplePage(null, ViewExample),
-                });
-            })}
-            {this._renderRow('Custom Right Button', () => {
-                this.props.navigator.push({
-                    title: NavigatorIOSExample.title,
-                    component: EmptyPage,
-                    rightButtonTitle: 'Cancel',
-                    onRightButtonPress: () => this.props.navigator.pop(),
-                    passProps: {
-                        text: 'This page has a right button in the nav bar',
-                    }
-                });
-            })}
-            {this._renderRow('Custom Left & Right Icons', () => {
-                this.props.navigator.push({
-                    title: NavigatorIOSExample.title,
-                    component: EmptyPage,
-                    leftButtonTitle: 'Custom Left',
-                    onLeftButtonPress: () => this.props.navigator.pop(),
-                    rightButtonIcon: require('image!NavBarButtonPlus'),
-                    onRightButtonPress: () => {
-                        AlertIOS.alert(
-                            'Bar Button Action',
-                            'Recognized a tap on the bar button icon',
-                            [
-                                {
-                                    text: 'OK',
-                                    onPress: () => console.log('Tapped OK'),
-                                },
-                            ]
-                        );
-                    },
-                    passProps: {
-                        text: 'This page has an icon for the right button in the nav bar',
-                    }
-                });
-            })}
-            {this._renderRow('Pop', () => {
-                this.props.navigator.pop();
-            })}
-            {this._renderRow('Pop to top', () => {
-                this.props.navigator.popToTop();
-            })}
-            {this._renderReplace()}
-            {this._renderReplacePrevious()}
-            {this._renderReplacePreviousAndPop()}
-            {this._renderRow('Exit NavigatorIOS Example', this.props.onExampleExit)}
-            </View>
+            <ListView
+              dataSource={this.state.dataSource}
+              renderRow={this._renderRow}
+              //renderScrollComponent={props => <RecyclerViewBackedScrollView {...props} />}
+              renderSeparator={(sectionID, rowID) => <View key={`${sectionID}-${rowID}`} style={styles.separator} />}
+              />
             <View style={styles.line}/>
             </ScrollView>
         );
     },
 
-    _renderReplace: function() {
-        if (!this.props.depth) {
-            // this is to avoid replacing the top of the stack
-            return null;
-        }
-        return this._renderRow('Replace here', () => {
-            var prevRoute = this.props.route;
-            this.props.navigator.replace({
-                title: 'New Navigation',
-                component: EmptyPage,
-                rightButtonTitle: 'Undo',
-                onRightButtonPress: () => this.props.navigator.replace(prevRoute),
-                passProps: {
-                    text: 'The component is replaced, but there is currently no ' +
-                          'way to change the right button or title of the current route',
-                }
-            });
-        });
-    },
-
-    _renderReplacePrevious: function() {
-        if (!this.props.depth || this.props.depth < 2) {
-            // this is to avoid replacing the top of the stack
-            return null;
-        }
-        return this._renderRow('Replace previous', () => {
-            this.props.navigator.replacePrevious({
-                title: 'Replaced',
-                component: EmptyPage,
-                passProps: {
-                    text: 'This is a replaced "previous" page',
-                },
-                wrapperStyle: styles.customWrapperStyle,
-            });
-        });
-    },
-
-    _renderReplacePreviousAndPop: function() {
-        if (!this.props.depth || this.props.depth < 2) {
-            // this is to avoid replacing the top of the stack
-            return null;
-        }
-        return this._renderRow('Replace previous and pop', () => {
-            this.props.navigator.replacePreviousAndPop({
-                title: 'Replaced and Popped',
-                component: EmptyPage,
-                passProps: {
-                    text: 'This is a replaced "previous" page',
-                },
-                wrapperStyle: styles.customWrapperStyle,
-            });
-        });
-    },
-
-    _renderRow: function(title: string, onPress: Function) {
+    _renderRow: function(rowData, sectionID, rowID) {
         return (
-            <View>
-            <TouchableHighlight onPress={onPress}>
-            <View style={styles.row}>
-            <Text style={styles.rowText}>
-            {title}
-            </Text>
-            </View>
-            </TouchableHighlight>
-            <View style={styles.separator} />
+            <View key={rowID}>
+              <View style={styles.row}>
+                <Text style={styles.rowText}>
+                  {rowData.title}
+                </Text>
+
+                <Text style={styles.rowText}>
+                  {rowData.text}
+                </Text>
+              </View>
+              <View style={styles.separator} />
             </View>
         );
-    },
+    }
 });
 
-const NavigatorIOSExample = React.createClass({
-    statics: {
-        title: '<NavigatorIOS>',
-        description: 'iOS navigation capabilities',
-        external: true,
-    },
-
+const SelectListPage = React.createClass({
     render: function() {
-        const {onExampleExit} = this.props;
+        return (
+            <ScrollView style={styles.list}>
+            <View style={styles.line}/>
+            <View style={styles.group}>
+            {
+                Object.keys(this.props.data).map((key) => {
+                    return this._renderRow(key, () => {
+
+                        switch(this.props.data[key].type) {
+                        case 'select-list':
+                            this.props.navigator.push({
+                                title: key,
+                                component: SelectListPage,
+                                passProps: {
+                                    data: this.props.data[key].data
+                                }
+                            });
+                            break;
+                        case 'data-list':
+                            this.props.navigator.push({
+                                title: key,
+                                component: DataListPage,
+                                passProps: {
+                                    data: this.props.data[key].data
+                                }
+                            });
+                        }                        
+                    })
+                })
+            }
+            </View>
+            <View style={styles.line}/>
+            </ScrollView>
+        );
+    },
+    
+    _renderRow: function(title, onPress) {
+        return (
+            <View key={title}>
+              <TouchableHighlight onPress={onPress}>
+                <View style={styles.row}>
+                  <Text style={styles.rowText}>
+                    {title}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+              <View style={styles.separator} />
+            </View>
+        );
+    }
+});
+
+
+
+const NavigatorIOSExample = React.createClass({
+    
+    render: function() {
         return (
             <NavigatorIOS
             style={styles.container}
             initialRoute={{
-                title: NavigatorIOSExample.title,
-                component: NavigatorIOSExamplePage,
-                passProps: {onExampleExit},
+                title: "Emacs Reference",
+                component: SelectListPage,
+                passProps: {data: Data.data}
             }}
             itemWrapperStyle={styles.itemWrapper}
             tintColor="#008888"
@@ -260,3 +251,6 @@ const styles = StyleSheet.create({
 });
 
 module.exports = NavigatorIOSExample;
+
+AppRegistry.registerComponent('EmacsReference', () => NavigatorIOSExample);
+
