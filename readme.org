@@ -1,0 +1,11 @@
+#+TITLE: Emacs Reference
+#+AUTHOR: 陳放為
+
+Inspired by VIReference (Ios App)
+[[./sreenshot/3.png]]
+
+This reference is for everyone who oftern has to use Unix editor Emacs. It covers all all aspectos of using emacs, like searching, editing, cursor moventment, etc. Even some very exotic commands are covered.
+
+* Screenshot
+[[./sreenshot/2.png]] 
+[[./sreenshot/1.png]] 

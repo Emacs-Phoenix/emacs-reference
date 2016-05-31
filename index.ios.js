@@ -25,6 +25,7 @@ const {
     ScrollView,
     StyleSheet,
     Component,
+    Icon,
     Text,
     TouchableHighlight,
     View,
@@ -33,57 +34,8 @@ const {
 } = ReactNative;
 
 
+import {Data} from './data.js';
 
-const Data = {
-    type: "select-list",
-    data: {
-        edit: {
-            type: "data-list",
-            data: [
-                {
-                    title: "delete",
-                    text: "C-h"
-                },
-                {
-                    title: "delete",
-                    text: "C-h"
-                }
-            ]
-        },
-        search: {
-            type: "data-list",
-            data: [
-                {
-                    title: "delete",
-                    text: "C-h"
-                }
-            ]
-        },
-        plugins: {
-            type: "select-list",
-            data: {
-                edit: {
-                    type: "data-list",
-                    data: [
-                        {
-                            title: "delete",
-                            text: "C-h"
-                        }
-                    ]
-                },
-                search: {
-                    type: "data-list",
-                    data: [
-                        {
-                            title: "delete",
-                            text: "C-h"
-                        }
-                    ]
-                }
-            }
-        }
-    }
-}
 
 const DataListPage = React.createClass({
 
@@ -114,11 +66,11 @@ const DataListPage = React.createClass({
         return (
             <View key={rowID}>
               <View style={styles.row}>
-                <Text style={styles.rowText}>
+                <Text style={styles.rowTitle}>
                   {rowData.title}
                 </Text>
 
-                <Text style={styles.rowText}>
+                <Text style={styles.rowDesc}>
                   {rowData.text}
                 </Text>
               </View>
@@ -189,14 +141,15 @@ const NavigatorIOSExample = React.createClass({
     render: function() {
         return (
             <NavigatorIOS
-            style={styles.container}
-            initialRoute={{
-                title: "Emacs Reference",
-                component: SelectListPage,
-                passProps: {data: Data.data}
-            }}
-            itemWrapperStyle={styles.itemWrapper}
-            tintColor="#008888"
+              style={styles.container}
+              initialRoute={{
+                  title: "Emacs",
+                  component: SelectListPage,
+                  passProps: {data: Data.data}
+              }}
+              itemWrapperStyle={styles.itemWrapper}
+              tintColor="#008888"
+              titleTextColor='#311B92'
             />
         );
     },
@@ -204,21 +157,24 @@ const NavigatorIOSExample = React.createClass({
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        flex: 1
+    },
+    selectTitle: {
+        color: '#7C4DFF'
     },
     customWrapperStyle: {
-        backgroundColor: '#bbdddd',
+        backgroundColor: '#bbdddd'
     },
     emptyPage: {
         flex: 1,
-        paddingTop: 64,
+        paddingTop: 64
     },
     emptyPageText: {
-        margin: 10,
+        margin: 10
     },
     list: {
         backgroundColor: '#eeeeee',
-        marginTop: 10,
+        marginTop: 10
     },
     group: {
         backgroundColor: 'white',
@@ -247,7 +203,18 @@ const styles = StyleSheet.create({
     rowText: {
         fontSize: 17,
         fontWeight: '500',
+        color: '#302c50'
     },
+    rowTitle: {
+        fontSize: 15,
+        fontWeight: '500',
+        marginBottom: 5,
+        color: '#999999'
+    },
+    rowDesc: {
+        fontSize: 18,
+        color: '#333333'
+    }
 });
 
 module.exports = NavigatorIOSExample;
